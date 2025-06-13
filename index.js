@@ -1,12 +1,13 @@
 import express from 'express'
 import { Router } from 'express'
 import DbConnection from "./Project/DB/DBconnection.js"
-import RegisterUser from './Project/routes/User_register.js'
+import AuthRoutes from './Project/routes/User_Auth_routes.js'
 import UserInfo from './Project/routes/User_info.js'
 import Attendance from './Project/routes/Attendance_route.js'
 import routes from './Project/routes/route.js'
 import cors from 'cors'
 import LeaveRoute from './Project/routes/LeaveApply_route.js'
+import Att_Summary from './Project/routes/Attendance_summary_routes.js'
 
 const app = express()
 const router = Router()
@@ -25,11 +26,12 @@ router.get('/', (req, res) => {
 })
 
 app.use('/', router)
-app.use('/api', RegisterUser())
+app.use('/api', AuthRoutes())
 app.use('/api', UserInfo())
 app.use('/api', Attendance())
 app.use('/api', routes())
 app.use('/api', LeaveRoute())
+app.use('/api', Att_Summary())
 
 app.listen(8000,'0.0.0.0', () => {
     console.log("server is running on 8000")

@@ -6,6 +6,7 @@ import { AuthorizationJWT } from "../Middleware/JWT_VerifyAuth.js";
 const router = Router()
 
 const Attendance = () => {
+
     router.post('/checkin', AuthorizationJWT, async(req, res) => {
         const userID = req.user.id
         const {check_in} = req.body
@@ -104,8 +105,8 @@ const Attendance = () => {
             }
         }
     })
-    return router
 
+    return router
 }
 
 export default Attendance

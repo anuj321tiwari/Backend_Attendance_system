@@ -5,7 +5,7 @@ import db from "../DB/DBconnection.js";
 
 const router = Router()
 
-const RegisterUser = () => {
+const AuthRoutes = () => {
 
     function passcode( length = 6){
         const text = "QWERTYUIOPASDFGHJKLZXCVBNM0123456789"
@@ -37,7 +37,7 @@ const RegisterUser = () => {
 
             const bycryptpassword = await bycrypt.hash(password, 10)
 
-             const role = email === Adminemail ? 'admin' : 'user'
+            const role = email === Adminemail ? 'admin' : 'user'
 
             await db.promise().query(
                 `insert into users(email, password, role) values(? ,?,?)`, 
@@ -100,4 +100,4 @@ const RegisterUser = () => {
     return router
 }
 
-export default RegisterUser
+export default AuthRoutes
