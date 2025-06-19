@@ -86,13 +86,16 @@ const AuthRoutes = () => {
     router.post('/passcode', async(req, res) => {
         const {email} = req.body;
         const code = passcode()
-        try{
 
+        if(!email){
+            return res.status(404).json({message: "Email is require to generate passcode", status:false})
+        }
+        try{
             await db.promise().query(`insert into passcode(code,assigned_email) values(?,?)`,[code, email])
-            res.status(200).json({message:`Passcode generated :  ${code}`})
+            return res.status(200).json({message:`Passcode generated :  ${code}`, status:true})
         }catch(err){
             if(err) return console.log("Error generating Passcode : ", err)
-            res.status(401).json({ error: 'Failed to generate passcode' })
+            res.status(401).json({ error: 'Failed to generate passcode', status:false})
         }
 
     })
