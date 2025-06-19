@@ -10,7 +10,7 @@ const Attendance = () => {
     router.post('/checkin', AuthorizationJWT, async(req, res) => {
         const userID = req.user.id
         const {check_in} = req.body
-        if ([check_in].some((filed) => filed.trim() === "")) {
+        if ([check_in].some((filed) => String(filed).trim() === "")) {
             res.send(401).json({message: "check in is required"})
             return
         }
@@ -23,7 +23,7 @@ const Attendance = () => {
             }
         )
         if(existAttendance.length > 0){
-            return res.status(400).json({ message: "Employee has already checked in today." })
+            return res.status(400).json({ message: "Employee has already checked in today.", status:false })
         }
 
         //logic for 
@@ -64,16 +64,14 @@ const Attendance = () => {
                 startDate.setDate(startDate.getDate() + 1)
             }
         }
-
-
         try {
             await db.promise().query(`insert into dailyattendance(CHECK_IN, CHECK_IN_DATE, AttendanceUser_id) values(?,?,?)`,
                 [check_in, checkinDate, userID]
             )
-            return res.status(200).json({message: `Checked in at ${checkintime}` })
+            return res.status(200).json({message: `Checked in at ${checkintime}`, status:true})
         } catch (error) {
             if (error) {
-                res.status(400).json({message:"Check in Not Done", error})
+               return res.status(400).json({message:"Check in Not Done", status:false})
             }
         }  
     })
@@ -86,22 +84,29 @@ const Attendance = () => {
 
         console.log(`User ID: ${userID}, Checkout Time: ${check_out}, Checkout Date: ${checkoutdate}`);
 
-        
         try {
             const [chechkin_Check] = await db.promise().query(`select CHECK_IN from dailyattendance where AttendanceUser_id = ? and CHECK_IN_DATE = ? `,
                 [userID, checkoutdate]
             )
             if (!chechkin_Check.length) {
-                return res.status(400).json({ message: 'You must check in before you can check out' });
+                return res.status(400).json({ message: 'You must check in before you can check out.', status:false });
+            }
+
+            const [checkout_check] = await db.promise().query(`select CHECK_OUT from dailyattendance where AttendanceUser_id = ? and CHECK_IN_DATE = ? `,
+                [userID, checkoutdate]
+            )
+            if(checkout_check.length > 0){
+                return res.status(400).json({ message: 'You have already checked out for today.', status:false });
             }
 
             await db.promise().query(`update dailyattendance set CHECK_OUT = ? where AttendanceUser_id = ? and CHECK_IN_DATE = ?`,
                 [check_out, userID, checkoutdate], 
             )
-            return res.status(200).json({message: `Checked Out at ${check_out}` })
+            return res.status(200).json({message: `Checked Out at ${check_out}`, status:true })
         } catch (error) {
+            console.log("Error in Checkout Route: ", error)
             if (error) {
-                return res.status(400).json({message:"Check Out Not Done", error})
+                return res.status(400).json({message:"Check Out Not Done", })
             }
         }
     })
