@@ -53,7 +53,15 @@ const ApplyLeave = `
     )
 `
 
-await Db.promise().query(`alter table apply_leave add column Status enum("Pending","Approved","Rejected") default "Pending" `)
+const holidays = `
+    create table if not exists holidays(
+    id int auto_increment primary key,
+    date date not null
+    )
+`
+
+
+// await Db.promise().query(`alter table apply_leave add column Status enum("Pending","Approved","Rejected") default "Pending" `)
 // await Db.promise().query(`alter table apply_leave modify column Status enum("On leave", "Absent", "Present", "Medical leave") default "Present" `)
 Db.query(createUsertable, (err) => {
     if (err) {
@@ -80,5 +88,9 @@ Db.query(createUsertable, (err) => {
     Db.query(ApplyLeave,(err)=>{
         if (err) return console.error('Failed to create Applyleave table:', err.message);
         console.log('Applyleave table created or already exists.')
+    })
+    Db.query(holidays, (err) => {
+        if (err) return console.error('Failed to create Holiday table:', err.message);
+        console.log('holiday table created or already exists.')
     })
 })

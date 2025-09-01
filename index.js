@@ -9,6 +9,7 @@ import cors from 'cors'
 import LeaveRoute from './Project/routes/LeaveApply_route.js'
 import Att_Summary from './Project/routes/Attendance_summary_routes.js'
 import Admin_route from './Project/admin_routes/admin_route.js'
+import Report_Generator from './Project/admin_routes/report_generate.js'
 
 const app = express()
 const router = Router()
@@ -36,6 +37,7 @@ app.use('/api', Att_Summary())
 
 //admin routes defined bellow
 app.use('/api', Admin_route())
+app.use('/api', Report_Generator())
 
 app.listen(8000,'0.0.0.0', () => {
     console.log("server is running on 8000")

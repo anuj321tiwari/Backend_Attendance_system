@@ -76,10 +76,10 @@ const AuthRoutes = () => {
                 role:user.role
             }, process.env.TOKEN_SECRETE)
             
-            res.status(200).json({message:"user login successful", token})
+            return res.status(200).json({message:"user login successful", token})
         } catch (error) {
             console.log(error)
-            res.status(400).json({ message:" Database Error"})
+            return res.status(400).json({ message:" Database Error"})
         }
     })
 

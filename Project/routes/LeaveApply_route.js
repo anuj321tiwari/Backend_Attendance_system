@@ -12,18 +12,18 @@ route.post('/leave/:id', AuthorizationJWT, async(req, res) => {
     const checkintime = new Date()
     const leaveDate = checkintime.toISOString().split("T")[0]
 
-    if ([name, employee_id,leave_type, reason].some((field) => field.trim() === " ")) {
-        res.status(400).json({message: "All Fields are required"})
-        return
-    }
+    // if ([name, employee_id, leave_type, reason].some((field) => field.trim() === " ")) {
+    //     return res.status(400).json({message: "All Fields are required"})   
+    // }
     try {
         await db.promise().query(`insert into apply_leave(user_id, employee_id, name, request_date, leave_type, reason	) values(?,?,?,?,?,?)`,
             [userId, employee_id, name, leaveDate, leave_type, reason ]
         )
         return res.status(200).json({message: `Request Applied for ${reason} successfullly`, status:true})
     } catch (error) {
-        res.status(400).json({ message:"something went wrong while sendfing leave request", status:false})
         console.log( "Something went wrong", error)
+        return res.status(500).json({ message:"something went wrong while sendfing leave request", status:false})
+        
     }
 
 })
@@ -36,6 +36,7 @@ route.get('/leave_get/:id', async(req, res) => {
                 from users u 
                 join apply_leave la on u.id = la.user_id
                 where u.id = ?
+                order by la.request_date DESC
             `, [userId])
         if (!response) {
             res.status(404).json({message: "no leave record found"})

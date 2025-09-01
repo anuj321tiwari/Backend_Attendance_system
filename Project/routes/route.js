@@ -13,16 +13,24 @@ const routes = () => {
         res.status(200).json(rows)
     })
 
-    router.get('/users/:id', async (req, res) => {
+    router.post('/usersattendance/:id', async (req, res) => {
         const id = req.params.id
+        const {month, year} = req.body
         const groupeddata= {}
-        const query = `SELECT u.id, u.email, u.role, ui.name, ui.employee_id, da.CHECK_IN, da.CHECK_OUT, da.CHECK_IN_DATE, da.Status 
+        // const query = `SELECT u.id, ui.name, ui.employee_id, da.CHECK_IN, da.CHECK_OUT, da.CHECK_IN_DATE, da.Status 
+        //                 FROM users u
+        //                 JOIN userinfo ui on u.id = ui.User_id
+        //                 LEFT JOIN dailyattendance da on u.id = da.AttendanceUser_id
+        //                 WHERE u.id = ? and month(CHECK_IN_DATE) = month(curdate()) and year(CHECK_IN_DATE) = year(curdate()) order by da.CHECK_IN_DATE DESC`;
+
+        const query = `SELECT u.id, ui.name, ui.employee_id, da.CHECK_IN, da.CHECK_OUT, da.CHECK_IN_DATE, da.Status 
                         FROM users u
                         JOIN userinfo ui on u.id = ui.User_id
                         LEFT JOIN dailyattendance da on u.id = da.AttendanceUser_id
-                        WHERE u.id = ?`;
+                        WHERE year(da.CHECK_IN_DATE)= ? and month(da.CHECK_IN_DATE)= ? and da.AttendanceUser_id = ? 
+                        ORDER BY da.CHECK_IN_DATE;`
         try {
-            const [result] = await db.promise().query(query, [id])
+            const [result] = await db.promise().query(query, [year, month, id])
             if (result.length === 0) {
                 return res.status(401).json({ message: "User Not Found", status: false })
             }
@@ -33,9 +41,6 @@ const routes = () => {
                     groupeddata[rec.id] = {
                         id:rec.id,
                         name: rec.name,
-                        email:rec.email,
-                        employee_id: rec.employee_id,
-                        role: rec.role,
                         attendance : []
                     }
                 }
