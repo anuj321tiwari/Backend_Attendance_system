@@ -10,11 +10,6 @@ const Attendance = () => {
 
     router.post('/checkin', AuthorizationJWT, async(req, res) => {
         const userID = req.user.id
-        // const {check_in} = req.body
-        // if ([check_in].some((filed) => String(filed).trim() === "")) {
-        //     res.send(401).json({message: "check in is required"})
-        //     return
-        // }
         const checkNow = new Date()
         const checkinDate = checkNow.toISOString().split("T")[0] //extract Date
         const Check_In_Time = TimeFormat()
@@ -86,7 +81,7 @@ const Attendance = () => {
             await db.promise().query(`insert into dailyattendance(CHECK_IN, CHECK_IN_DATE, AttendanceUser_id) values(?,?,?)`,
                 [Check_In_Time, checkinDate, userID]
             )
-            return res.status(200).json({message: `Checked in at ${checkNow}`, status:true})
+            return res.status(200).json({ message: `Checked in at ${checkNow}`, status:true })
         } catch (error) {
             if (error) {
                return res.status(400).json({message:"Check in Not Done", status:false})

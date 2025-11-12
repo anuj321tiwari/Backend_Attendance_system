@@ -57,6 +57,30 @@ const routes = () => {
         }
     })
 
+    router.patch('/update-info', async(req, res) => {
+        const id = req.params.id ;
+        const {name, img, desigination} = req.body
+        
+        const fileds = []
+        const values = []
+        if (name !== undefined) {
+            fileds.push('name = ?'),
+            values.push(name)
+        }
+        if (img !== undefined) {
+            fileds.push('img = ?'),
+            values.push(img)
+        }
+        if (desigination) {
+            fileds.push('desigination = ?'),
+            values.push(desigination)
+        }
+        try {
+            await db.promise().query(`update userinfo set ${fileds} where User_id = ?  `, [...values, id])
+        } catch (error) {
+            
+        }
+    })
     return router
 }
 

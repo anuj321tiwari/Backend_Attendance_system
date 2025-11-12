@@ -16,7 +16,7 @@ const UserInfo = () => {
 
         const [exists] = await db.promise().query(`select * from userinfo where employee_id = ?`,[employee_id])
         if (exists.length > 0) {
-            return res.status(409).json({ message: 'Emplyee Id exists!'})
+            return res.status(409).json({ message: 'Emplyoee Id exists!'})
         }
         try {
             const [userinfo] = await db.promise().query(`insert into userinfo(name, employee_id, User_id) values(?,?,?)`,

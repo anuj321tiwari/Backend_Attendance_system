@@ -26,7 +26,12 @@ const createUserInfo = `
     User_id int,
     foreign key (User_id) references users(id) on delete cascade
 )`;
-
+const createCategoryTable = `
+    create table if not exists category(
+    id int auto_increment primary key,
+    category_name varchar(255) unique not null
+    )
+`
 const DailyAttendance = `
     create table if not exists DailyAttendance(
     id int auto_increment primary key,
@@ -62,7 +67,7 @@ const holidays = `
 
 
 // await Db.promise().query(`alter table apply_leave add column Status enum("Pending","Approved","Rejected") default "Pending" `)
-// await Db.promise().query(`alter table apply_leave modify column Status enum("On leave", "Absent", "Present", "Medical leave") default "Present" `)
+// await Db.promise().query(`alter table userInfo add column category int `)
 Db.query(createUsertable, (err) => {
     if (err) {
         if (err) return console.error('Failed to create users table:', err.message);
@@ -74,6 +79,10 @@ Db.query(createUsertable, (err) => {
             if (err) return console.error('Failed to create users table:', err.message);
             console.log('UsersInfo table created or already exists.');
         }
+    })
+    Db.query(createCategoryTable, (err) => {
+        if(err) return console.log("Failed to create category table: ", err.message);
+        console.log('Category table created or all ready exists')
     })
 
     Db.query(DailyAttendance, (err) => {

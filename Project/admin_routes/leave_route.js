@@ -5,7 +5,7 @@ import isAdmin from "../Middleware/isAdmin_authenticated.js";
 
 const route =  Router()
 
-const Admin_route = () => {
+const Leave_route = () => {
     route.get('/admin_get_alluser', async(req,res) => {
         try {
             const [response] = await db.promise().
@@ -18,6 +18,17 @@ const Admin_route = () => {
         } catch (error) {
             console.log("error from server in get all user : ", error)
             return res.status(500).json({message: "Something went wrong While getting all users from server", status:false})
+        }
+    })
+
+    route.get('/admin_get_user/:id', async(req,res) => {
+        const id = req.params.id
+        try {
+            const [user] = await db.promise().
+            query(' select u.email, u.role, ui.employee_id, ui.name from users as u join userinfo ui on u.id = ui.User_id where u.id = ? ', [id])
+            return res.status(200).json(user)
+        } catch (error) {
+            console.log(error)
         }
     })
 
@@ -45,7 +56,9 @@ const Admin_route = () => {
             return res.status(500).json('server errors')
         }
     })
+
+    
     return route
 }
 
-export default Admin_route
+export default Leave_route
