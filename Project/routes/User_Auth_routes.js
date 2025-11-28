@@ -16,7 +16,7 @@ const AuthRoutes = () => {
         return code
     }
 
-    const Adminemail = "anuj321@gmail.com"
+    const Adminemail = "xyz@gmail.com"
     router.post('/register', async (req, res) => {
         console.log('register hit')
         const {email, password, passcode} = req.body
